@@ -43,7 +43,6 @@ public class TicketDataSource extends AbstractReportDataSource {
 								boolean extra = false;
 								String name = " - " + modifier.getName();
 								if (modifier.getModifierType() == TicketItemModifier.EXTRA_MODIFIER) {
-									name = " - Extra " + name;
 									extra = true;
 								}
 								row = new Row();

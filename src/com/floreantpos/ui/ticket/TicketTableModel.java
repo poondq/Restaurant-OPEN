@@ -91,10 +91,12 @@ public class TicketTableModel extends AbstractTableModel {
 						display = " - No " + display;
 						return display;
 					}
+/*
 					else if (modifier.getModifierType() == TicketItemModifier.EXTRA_MODIFIER) {
 						display = " - Extra " + display;
 						return display;
 					}
+*/
 					return " - " + display;
 
 				case 2:

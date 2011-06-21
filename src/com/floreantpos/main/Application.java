@@ -117,6 +117,7 @@ public class Application {
 			int terminalId = ApplicationConfig.getTerminalId();
 			logger.info("Terminal ID from configuration=" + terminalId);
 
+			System.out.println(terminalId);
 			if (terminalId == -1) {
 				NumberSelectionDialog dialog = new NumberSelectionDialog();
 				dialog.setDecimalAllowed(false);

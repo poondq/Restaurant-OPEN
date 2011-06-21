@@ -7,13 +7,12 @@ import java.util.prefs.Preferences;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
-import org.apache.derby.jdbc.ClientDriver;
 
 import com.floreantpos.main.Application;
 
 public class ApplicationConfig {
+	public static final String DATABASE_DRIVER = "DATABASE_DRIVER";
 	public static final String DATABASE_URL = "DATABASE_URL";
-	public static final String DATABASE_PORT = "DATABASE_PORT";
 	public static final String DATABASE_NAME = "DATABASE_NAME";
 	public static final String DATABASE_USER = "DATABASE_USER";
 	public static final String DATABASE_PASSWORD = "DATABASE_PASS";
@@ -61,27 +60,27 @@ public class ApplicationConfig {
 	public static void put(String key, String value) {
 		pref.put(key, value);
 	}
+
+	public static String getDatabaseDriver() {
+		return pref.get(DATABASE_DRIVER, "org.apache.derby.jdbc.ClientDriver");
+	}
+	
+	public static void setDatabaseDriver(String driver) {
+		pref.put(DATABASE_DRIVER, driver);
+	}
 	
 	public static String getDatabaseURL() {
-		return pref.get(DATABASE_URL, "localhost");
-	}
-
-	public static String getConnectionURL() {
-		return "jdbc:derby://" + getDatabaseURL() + ":" + getDatabasePort() + "/" + getDatabaseName(); 
+		return pref.get(DATABASE_URL, "jdbc:derby://localhost:1527/");
 	}
 	
+	public static String getConnectionURL() {
+		return getDatabaseURL() + getDatabaseName();
+	}
+
 	public static void setDatabaseURL(String url) {
 		pref.put(DATABASE_URL, url);
 	}
-	
-	public static String getDatabasePort() {
-		return pref.get(DATABASE_PORT, "1527");
-	}
-	
-	public static void setDatabasePort(String port) {
-		pref.put(DATABASE_PORT, port);
-	}
-	
+		
 	public static String getDatabaseName() {
 		return pref.get(DATABASE_NAME, "posdb");
 	}
@@ -106,13 +105,18 @@ public class ApplicationConfig {
 		pref.put(DATABASE_PASSWORD, password);
 	}
 	
-	public static boolean checkDatabaseConnection(String url, String port, String databaseName, String user, String password) {
-		url = "jdbc:derby://" + url + ":" + port + "/" + databaseName; 
+	public static boolean checkDatabaseConnection(String databaseDriver, String databaseURL, String databaseName, String user, String password) {
 		
-		new ClientDriver();
+		try {
+			Class.forName(databaseDriver);
+		} catch (ClassNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
 		Connection connection = null; 
 		try {
-			connection = DriverManager.getConnection(url, user, password);
+			connection = DriverManager.getConnection(databaseURL + databaseName, user, password);
 			return true;
 		} catch (SQLException e) {
 			return false;
@@ -123,10 +127,19 @@ public class ApplicationConfig {
 		}
 	}
 	public static boolean checkDatabaseConnection() {
-		return checkDatabaseConnection(getDatabaseURL(), getDatabasePort(), getDatabaseName(), getDatabaseUser(), getDatabasePassword());
+		return checkDatabaseConnection(getDatabaseDriver(), getDatabaseURL(), getDatabaseName(), getDatabaseUser(), getDatabasePassword());
 	}
 
 	public static PropertiesConfiguration getConfiguration() {
 		return configuration;
+	}
+	
+	public static void serialize() {
+		try {
+			configuration.save();
+		} catch (ConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

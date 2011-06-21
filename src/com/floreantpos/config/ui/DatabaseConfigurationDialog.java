@@ -28,8 +28,8 @@ public class DatabaseConfigurationDialog extends POSDialog implements ActionList
 	private static final String CLOSE = "close";
 	private static final String SAVE = "save";
 	private static final String TEST = "test";
-	private JTextField tfServerAddress;
-	private JTextField tfServerPort;
+	private JTextField tfDatabaseDriver;
+	private JTextField tfDatabaseURL;
 	private JTextField tfDatabaseName;
 	private JTextField tfUserName;
 	private JPasswordField tfPassword;
@@ -65,18 +65,18 @@ public class DatabaseConfigurationDialog extends POSDialog implements ActionList
 		setLayout(new MigLayout("fill","[][fill, grow]",""));
 	
 		titlePanel = new TitlePanel();
-		tfServerAddress = new JTextField();
-		tfServerPort = new JTextField();
+		tfDatabaseDriver = new JTextField();
+		tfDatabaseURL = new JTextField();
 		tfDatabaseName = new JTextField();
 		tfUserName = new JTextField();
 		tfPassword = new JPasswordField();
 
 		add(titlePanel, "span, grow, wrap");
 		
-		add(new JLabel("Database Server Address" + ":"));
-		add(tfServerAddress, "grow, wrap");
-		add(new JLabel("Database Server Port" + ":"));
-		add(tfServerPort, "grow, wrap");
+		add(new JLabel("Database Driver" + ":"));
+		add(tfDatabaseDriver, "grow, wrap");
+		add(new JLabel("Database URL" + ":"));
+		add(tfDatabaseURL, "grow, wrap");
 		add(new JLabel("Database Name" + ":"));
 		add(tfDatabaseName, "grow, wrap");
 		add(new JLabel("User Name" + ":"));
@@ -103,8 +103,8 @@ public class DatabaseConfigurationDialog extends POSDialog implements ActionList
 		btnFinish.addActionListener(this);
 		btnExit.addActionListener(this);
 		
-		tfServerAddress.setText(ApplicationConfig.getDatabaseURL());
-		tfServerPort.setText(ApplicationConfig.getDatabasePort());
+		tfDatabaseDriver.setText(ApplicationConfig.getDatabaseDriver());
+		tfDatabaseURL.setText(ApplicationConfig.getDatabaseURL());
 		tfDatabaseName.setText(ApplicationConfig.getDatabaseName());
 		tfUserName.setText(ApplicationConfig.getDatabaseUser());
 		tfPassword.setText(ApplicationConfig.getDatabasePassword());
@@ -113,14 +113,14 @@ public class DatabaseConfigurationDialog extends POSDialog implements ActionList
 	public void actionPerformed(ActionEvent e) {
 		String command = e.getActionCommand();
 		
-		String databaseURL = tfServerAddress.getText();
-		String databasePort = tfServerPort.getText();
+		String databaseDriver = tfDatabaseDriver.getText();
+		String databaseURL = tfDatabaseURL.getText();
 		String databaseName = tfDatabaseName.getText();
 		String user = tfUserName.getText();
 		String pass = new String(tfPassword.getPassword());
 		
 		if(TEST.equalsIgnoreCase(command)) {
-			if(ApplicationConfig.checkDatabaseConnection(databaseURL, databasePort, databaseName, user, pass)) {
+			if(ApplicationConfig.checkDatabaseConnection(databaseDriver, databaseURL, databaseName, user, pass)) {
 				JOptionPane.showMessageDialog(this, "Connection Successfull!");
 			}
 			else {
@@ -128,12 +128,15 @@ public class DatabaseConfigurationDialog extends POSDialog implements ActionList
 			}
 		}
 		else if(SAVE.equalsIgnoreCase(command)) {
-			if(ApplicationConfig.checkDatabaseConnection(databaseURL, databasePort, databaseName, user, pass)) {
+			if(ApplicationConfig.checkDatabaseConnection(databaseDriver, databaseURL, databaseName, user, pass)) {
+				ApplicationConfig.setDatabaseDriver(databaseDriver);
 				ApplicationConfig.setDatabaseURL(databaseURL);
-				ApplicationConfig.setDatabasePort(databasePort);
 				ApplicationConfig.setDatabaseName(databaseName);
 				ApplicationConfig.setDatabaseUser(user);
 				ApplicationConfig.setDatabasePassword(pass);
+				
+				ApplicationConfig.serialize();
+				
 				dispose();
 			}
 			else {
