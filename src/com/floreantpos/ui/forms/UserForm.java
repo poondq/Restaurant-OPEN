@@ -19,6 +19,7 @@ import com.floreantpos.model.util.IllegalModelStateException;
 import com.floreantpos.ui.BeanEditor;
 import com.floreantpos.ui.dialog.POSMessageDialog;
 import com.floreantpos.util.POSUtil;
+import com.floreantpos.util.PasswordHasher;
 
 /**
  * 
@@ -317,7 +318,7 @@ public class UserForm extends BeanEditor {
 		user.setUserId(id);
 		user.setFirstName(firstName);
 		user.setLastName(lastName);
-		user.setPassword(password1);
+		user.setPassword(PasswordHasher.hashPassword(password1));
 
 		setBean(user);
 		return true;

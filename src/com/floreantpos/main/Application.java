@@ -39,7 +39,7 @@ import com.floreantpos.util.TicketActiveDateSetterTask;
 import com.jgoodies.looks.plastic.PlasticXPLookAndFeel;
 import com.jgoodies.looks.plastic.theme.ExperienceBlue;
 
-public class Application {
+public class Application implements Runnable {
 	private static Log logger = LogFactory.getLog(Application.class);
 
 	private Timer autoDrawerPullTimer;
@@ -75,7 +75,7 @@ public class Application {
 		});
 	}
 
-	public void start() {
+	public void run() {
 		setApplicationLook();
 
 		rootView = RootView.getInstance();

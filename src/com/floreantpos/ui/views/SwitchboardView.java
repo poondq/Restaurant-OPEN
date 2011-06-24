@@ -48,7 +48,7 @@ import com.floreantpos.ui.views.order.RootView;
  * @author  MShahriar
  */
 public class SwitchboardView extends JPanel implements ActionListener {
-	public final static String VIEW_NAME = com.floreantpos.POSConstants.SWITCHBOARD;
+	public final static String VIEW_NAME = "SWITCHBOARD";
 
 	private Timer ticketListUpdater;
 

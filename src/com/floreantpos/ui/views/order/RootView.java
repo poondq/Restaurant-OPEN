@@ -26,12 +26,13 @@ public class RootView extends com.floreantpos.swing.TransparentPanel {
 		setLayout(layout);
 		setBorder(new EmptyBorder(3,3,3,3));
 		
+		
 		loginScreen = new LoginScreen();
 		addView(LoginScreen.VIEW_NAME, loginScreen);
-		
+
 		switchboardView = new SwitchboardView();
 		addView(SwitchboardView.VIEW_NAME, switchboardView);
-		
+
 		orderView = OrderView.getInstance();
 		orderView.init();
 		addView(OrderView.VIEW_NAME, orderView);
