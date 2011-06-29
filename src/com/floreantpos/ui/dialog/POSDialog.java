@@ -13,14 +13,10 @@ import com.floreantpos.swing.GlassPane;
 
 public class POSDialog extends JDialog {
 	protected boolean canceled = true;
-	private GlassPane glassPane;
 
 	public POSDialog() throws HeadlessException {
 		super(Application.getPosWindow(), true);
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-
-		glassPane = new GlassPane();
-		setGlassPane(glassPane);
 		
 		initUI();
 	}
@@ -30,9 +26,6 @@ public class POSDialog extends JDialog {
 
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 
-		glassPane = new GlassPane();
-		setGlassPane(glassPane);
-		
 		initUI();
 	}
 
@@ -40,9 +33,6 @@ public class POSDialog extends JDialog {
 		super(owner, title, modal);
 
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-
-		glassPane = new GlassPane();
-		setGlassPane(glassPane);
 		
 		initUI();
 	}
@@ -51,25 +41,29 @@ public class POSDialog extends JDialog {
 		super(owner, modal);
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 
-		glassPane = new GlassPane();
-		setGlassPane(glassPane);
-		
 		initUI();
 	}
 
 	public POSDialog(Frame owner, boolean modal, boolean unDecorated) throws HeadlessException {
 		super(owner, modal);
-		//setUndecorated(unDecorated);
+		setUndecorated(unDecorated);
 
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 
-		glassPane = new GlassPane();
-		setGlassPane(glassPane);
 		initUI();
 	}
 	
-	protected void initUI() {}
+	protected void initUI() {
+	}
 
+	public void dispose() {
+		GlassPane posGlassPane = (GlassPane) Application.getPosWindow().getGlassPane();
+		posGlassPane.setVisible(false);
+		super.dispose();
+	}
+
+	
+	
 	public void open() {
 		canceled = false;
 		if (isUndecorated()) {
@@ -86,7 +80,13 @@ public class POSDialog extends JDialog {
 		else {
 			setLocationRelativeTo(getOwner());
 		}
+
+		GlassPane posGlassPane = (GlassPane) Application.getPosWindow().getGlassPane();		
+		posGlassPane.setMessage("");
+		posGlassPane.setVisible(true);
+
 		setVisible(true);
+
 	}
 
 	public boolean isCanceled() {
@@ -95,9 +95,5 @@ public class POSDialog extends JDialog {
 
 	public void setCanceled(boolean canceled) {
 		this.canceled = canceled;
-	}
-
-	public void setGlassPaneVisible(boolean b) {
-		glassPane.setVisible(b);
 	}
 }

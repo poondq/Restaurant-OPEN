@@ -7,6 +7,7 @@
 package com.floreantpos.ui.views;
 
 
+import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Calendar;
@@ -21,6 +22,7 @@ import javax.swing.Timer;
 import com.floreantpos.POSConstants;
 import com.floreantpos.bo.ui.BackOfficeWindow;
 import com.floreantpos.main.Application;
+import com.floreantpos.main.PosWindow;
 import com.floreantpos.model.ActionHistory;
 import com.floreantpos.model.AttendenceHistory;
 import com.floreantpos.model.Shift;
@@ -33,6 +35,8 @@ import com.floreantpos.model.dao.AttendenceHistoryDAO;
 import com.floreantpos.model.dao.TicketDAO;
 import com.floreantpos.print.PosPrintService;
 import com.floreantpos.services.PosTransactionService;
+import com.floreantpos.swing.PosButton;
+import com.floreantpos.ui.dialog.ChangePinDialog;
 import com.floreantpos.ui.dialog.ManagerDialog;
 import com.floreantpos.ui.dialog.NumberSelectionDialog2;
 import com.floreantpos.ui.dialog.POSMessageDialog;
@@ -72,6 +76,7 @@ public class SwitchboardView extends JPanel implements ActionListener {
 		btnSplitTicket.addActionListener(this);
 		btnTakeout.addActionListener(this);
 		btnVoidTicket.addActionListener(this);
+		btnChangePin.addActionListener(this);
 
 		ticketListUpdater = new Timer(30 * 1000, new TicketListUpdaterTask());
 	}
@@ -108,6 +113,7 @@ public class SwitchboardView extends JPanel implements ActionListener {
 		btnBackOffice = new com.floreantpos.swing.PosButton();
 		btnManager = new com.floreantpos.swing.PosButton();
 		btnClockOut = new com.floreantpos.swing.PosButton();
+		btnChangePin = new PosButton();
 
 		setLayout(new java.awt.BorderLayout(10, 10));
 
@@ -181,6 +187,7 @@ public class SwitchboardView extends JPanel implements ActionListener {
 		btnPrintTicket.setPreferredSize(new java.awt.Dimension(120, 50));
 		activityPanel.add(btnPrintTicket);
 
+		
 		bottomLeftPanel.add(activityPanel, java.awt.BorderLayout.SOUTH);
 
 		bottomPanel.add(bottomLeftPanel, java.awt.BorderLayout.CENTER);
@@ -198,6 +205,9 @@ public class SwitchboardView extends JPanel implements ActionListener {
 
 		btnManager.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/user_32.png")));
 		btnManager.setText(POSConstants.CAPITAL_MANAGER);
+		
+		btnChangePin.setText("CHANGE PIN");
+		activityPanel.add(btnChangePin);
 
 		btnClockOut.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/log_out_32.png")));
 		btnClockOut.setText(POSConstants.CAPITAL_CLOCK_OUT);
@@ -205,18 +215,34 @@ public class SwitchboardView extends JPanel implements ActionListener {
 		org.jdesktop.layout.GroupLayout bottomRightPanelLayout = new org.jdesktop.layout.GroupLayout(bottomRightPanel);
 		bottomRightPanel.setLayout(bottomRightPanelLayout);
 		bottomRightPanelLayout.setHorizontalGroup(bottomRightPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING).add(
-				bottomRightPanelLayout.createSequentialGroup().addContainerGap().add(
-						bottomRightPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING).add(btnShutdown, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 168, Short.MAX_VALUE).add(btnLogout, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 168, Short.MAX_VALUE).add(btnClockOut,
-								org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 168, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE).add(btnBackOffice, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 168, Short.MAX_VALUE).add(btnManager, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 168, Short.MAX_VALUE))
+				bottomRightPanelLayout.createSequentialGroup()
+					.addContainerGap()
+					.add(bottomRightPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+								.add(btnShutdown, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 168, Short.MAX_VALUE)
+								.add(btnLogout, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 168, Short.MAX_VALUE)
+								.add(btnClockOut,org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 168, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+								.add(btnChangePin,org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 168, Short.MAX_VALUE)
+								.add(btnBackOffice, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 168, Short.MAX_VALUE)
+								.add(btnManager, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 168, Short.MAX_VALUE))
 						.addContainerGap()));
 		bottomRightPanelLayout.setVerticalGroup(bottomRightPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING).add(
 				org.jdesktop.layout.GroupLayout.TRAILING,
-				bottomRightPanelLayout.createSequentialGroup().addContainerGap(39, Short.MAX_VALUE).add(btnManager, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE).addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED).add(
-						btnBackOffice, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE).addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED).add(btnClockOut, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
-						org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE).addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED).add(btnLogout, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
-						org.jdesktop.layout.GroupLayout.PREFERRED_SIZE).addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED).add(btnShutdown, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 58, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE).addContainerGap()));
+				bottomRightPanelLayout
+					.createSequentialGroup()
+						.addContainerGap(39, Short.MAX_VALUE)
+						.add(btnManager, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+						.addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+						.add(btnBackOffice, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+						.addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+						.add(btnChangePin, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+						.addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+						.add(btnClockOut, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+						.addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+						.add(btnLogout, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+						.addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+						.add(btnShutdown, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 58, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE).addContainerGap()));
 
-		bottomRightPanelLayout.linkSize(new java.awt.Component[] { btnBackOffice, btnClockOut, btnLogout, btnManager, btnShutdown }, org.jdesktop.layout.GroupLayout.VERTICAL);
+		bottomRightPanelLayout.linkSize(new java.awt.Component[] { btnBackOffice, btnChangePin, btnClockOut, btnLogout, btnManager, btnShutdown }, org.jdesktop.layout.GroupLayout.VERTICAL);
 
 		bottomPanel.add(bottomRightPanel, java.awt.BorderLayout.EAST);
 
@@ -295,6 +321,12 @@ public class SwitchboardView extends JPanel implements ActionListener {
 		user.doClockOut(attendenceHistory, shift, calendar);
 
 		Application.getInstance().logout();
+	}
+
+	private synchronized void doChangePin() {
+				
+		ChangePinDialog cpd = new ChangePinDialog(Application.getPosWindow(),true, false);
+		cpd.open();
 	}
 
 	private synchronized void doShowBackoffice() {
@@ -684,6 +716,7 @@ public class SwitchboardView extends JPanel implements ActionListener {
 	private com.floreantpos.swing.PosButton btnVoidTicket;
 	private javax.swing.JLabel lblUserName;
 	private com.floreantpos.ui.TicketListView openTicketList;
+	private PosButton btnChangePin;
 
 	// End of variables declaration//GEN-END:variables
 
@@ -749,6 +782,9 @@ public class SwitchboardView extends JPanel implements ActionListener {
 		}
 		if (source == btnVoidTicket) {
 			doVoidTicket();
+		}
+		if (source == btnChangePin) {
+			doChangePin();
 		}
 	}
 

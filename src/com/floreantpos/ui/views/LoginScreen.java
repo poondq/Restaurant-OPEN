@@ -63,10 +63,6 @@ public class LoginScreen extends JPanel {
 		
 		add(imageComponent, "spany,grow,flowx");
 		
-//		passwordScreen = PasswordScreen.getInstance();
-//		passwordScreen.setBorder(new CompoundBorder(new EtchedBorder(), new EmptyBorder(5,5,12,5)));
-//		add(passwordScreen, "width 200,growy 100");
-
 		keypad = new NumericKeypad();
 		loginPanel = new JPanel();
 		promptLabel = new JLabel("USER LOGIN");
@@ -104,7 +100,6 @@ public class LoginScreen extends JPanel {
 	        		}
 	        		break;
 	        	}
-//	        	setVisible(true);
 	        }
 	    });
 
